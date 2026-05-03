@@ -2,50 +2,369 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Aito Sanaristikko</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90s Ritual - 5 Minuutin Pysähdys</title>
     <style>
-        body { background: #f0f0f0; display: flex; justify-content: center; padding: 20px; font-family: sans-serif; }
-        #grid { 
-            display: grid; 
-            grid-template-columns: repeat(8, 80px); 
-            grid-template-rows: repeat(8, 80px);
-            background: #000; gap: 1px; border: 2px solid #000;
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #ff4500; /* Orange-red for grunge vibe */
+            --secondary-color: #4a4a4a;
+            --success-color: #4caf50;
+            --font-main: 'Courier New', Courier, monospace;
         }
-        .cell { background: white; position: relative; width: 80px; height: 80px; }
-        
-        /* Vihjeruutu (Harmaa pohja, pieni teksti) */
-        .clue-cell { background: #d1d1d1; font-size: 11px; padding: 4px; line-height: 1.1; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: bold; }
-        .clue-cell::after { content: '➔'; position: absolute; bottom: 2px; right: 2px; color: #444; font-size: 14px; }
 
-        /* Vastausruutu (Valkoinen, iso kirjain) */
-        .cell input {
-            width: 100%; height: 100%; border: none; text-align: center;
-            font-size: 32px; font-weight: bold; text-transform: uppercase; outline: none;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
         }
-        .cell input:focus { background: #fff9c4; }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #252525;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .card {
+            background: #303030;
+            padding: 20px;
+            border-left: 4px solid var(--accent-color);
+            margin-bottom: 25px;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .topic-tag {
+            background: var(--accent-color);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+
+        .task-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .context {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 10px;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--accent-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+            font-family: var(--font-main);
+        }
+
+        .btn:hover {
+            background: #555;
+        }
+
+        .btn-start {
+            background: var(--accent-color);
+        }
+        .btn-start:hover {
+            background: #cc3700;
+        }
+
+        .btn-done {
+            background: var(--success-color);
+            display: none;
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+            min-height: 1.2em;
+        }
+
+        .completed-overlay {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .completed-overlay h2 {
+            color: var(--success-color);
+        }
+
+        /* Grunge texture effect */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
 
-<div id="grid">
-    <div class="cell clue-cell">DION<br>HITTI</div>
-    <div class="cell"><input maxlength="1" data-ans="H"></div>
-    <div class="cell"><input maxlength="1" data-ans="O"></div>
-    <div class="cell"><input maxlength="1" data-ans="L"></div>
-    <div class="cell"><input maxlength="1" data-ans="Y"></div>
-    <div class="cell clue-cell" style="background:#000"></div> <div class="cell clue-cell">MUSTA<br>ALBUMI</div>
-    <div class="cell"><input maxlength="1" data-ans="M"></div>
+<div class="container">
+    <div class="content-wrapper">
+        <h1>90s Ritual</h1>
+        <div class="subtitle">5 minuuttia. Rock. Metal. Elokuvat. Sinun aikasi.</div>
 
-    <div class="cell clue-cell">ASUTUS</div>
-    <div class="cell"><input maxlength="1" data-ans="K"></div>
-    <div class="cell"><input maxlength="1" data-ans="O"></div>
-    <div class="cell"><input maxlength="1" data-ans="T"></div>
-    <div class="cell"><input maxlength="1" data-ans="I"></div>
-    <div class="cell clue-cell">METALLI<br>BÄNDI</div>
-    <div class="cell"><input maxlength="1" data-ans="D"></div>
-    <div class="cell"><input maxlength="1" data-ans="E"></div>
+        <!-- Task Card -->
+        <div id="task-card" class="card">
+            <span id="topic-tag" class="topic-tag">Loading...</span>
+            <div id="task-text" class="task-text">Ladataan päivän tehtävää...</div>
+            <div id="context" class="context"></div>
+        </div>
+
+        <!-- Timer Section -->
+        <div id="timer-section" style="display:none;">
+            <div class="timer-display" id="timer">05:00</div>
+            <button id="btn-done" class="btn btn-done">Tehtävä suoritettu</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="action-area">
+            <button id="btn-start" class="btn btn-start">Aloita 5 minuutin rutiini</button>
+        </div>
+
+        <div id="status-msg" class="status-message"></div>
+
+        <!-- Completion Message -->
+        <div id="completion-msg" class="completed-overlay">
+            <h2>Hyvä työ!</h2>
+            <p>Olet antanut itsellesi 5 minuuttia rauhaa tänään.</p>
+            <p>Tule huomenna uuden 90-luvun inspiraation parissa.</p>
+        </div>
+    </div>
 </div>
 
+<script>
+    // --- DATA: 1990s Rock, Metal & Movies ---
+    const rituals = [
+        {
+            topic: "Grunge",
+            task: "Kuuntele Nirvanan 'Come As You Are'. Sulje silmäsi ensimmäisen 30 sekunnin ajan ja anna basson värähdellä.",
+            context: "1991, Nevermind. Tunne se tyhjä tila, joka grunge toi mukanaan."
+        },
+        {
+            topic: "Metal",
+            task: "Lue Metallican 'Enter Sandman' -sanat ääneen. Mieti yhtä asiaa, joka pelottaa sinua, ja anna sen olla vain hetki.",
+            context: "1991, Metallica (Black Album). Raskas, mutta vapauttava."
+        },
+        {
+            topic: "Elokuva",
+            task: "Katso YouTube-kohtaus elokuvasta 'The Crow' (1994). Mieti, miten suru voi olla voimaa, ei heikkoutta.",
+            context: "Brandon Leen viimeinen rooli. Mustaa ja valkoista, mutta värikästä tunteita."
+        },
+        {
+            topic: "Alternative",
+            task: "Soita Radioheadin 'Creep'. Kun laulu 'I'm a creep' soi, hymyile itsellesi. Se on ok olla epätäydellinen.",
+            context: "1993, Pablo Honey. Tunne, jota monet jakavat."
+        },
+        {
+            topic: "Industrial",
+            task: "Kuuntele Nine Inch Nailsin 'Head Like a Hole'. Lyö jalkaa tahdissa 5 kertaa. Tunnista raivo, joka on sisälläsi.",
+            context: "1989/1990, Pretty Hate Machine. Raaka ja rehellinen."
+        },
+        {
+            topic: "Elokuva",
+            task: "Ajattele elokuvaa 'Fight Club' (1999). Kirjoita ylös yksi asia, jonka haluaisit 'tuhota' stressin vuoksi, ja sitten risti se yli.",
+            context: "David Fincherin mestariteos. Vapautuminen kuluttamisesta."
+        },
+        {
+            topic: "Nu Metal",
+            task: "Kuuntele Linkin Parkin 'One Step Closer' (tai 'Crawling'). Hengitä syvään sisään 4 sekuntia, pidä hengitystä 4 sekuntia, hengitä ulos 4 sekuntia.",
+            context: "2000 (lähes 90-luku), Hybrid Theory. Tunne, joka puhuu nuoruuden turhautumisesta."
+        },
+        {
+            topic: "Britpop",
+            task: "Kuuntele Oasisin 'Wonderwall'. Laula kuiskaten 'Today is gonna be the day'. Usko siihen hetkeksi.",
+            context: "1995, (What's the Story) Morning Glory?. Manchesterin henki."
+        },
+        {
+            topic: "Elokuva",
+            task: "Mieti elokuvaa 'Pulp Fiction'. Muista kohtaus, jossa Vincent ja Jules kävelevät. Kävele huoneessasi hitaasti 1 minuutin ajan.",
+            context: "1994, Quentin Tarantino. Tyyliteltynä kaaosta."
+        },
+        {
+            topic: "Rock",
+            task: "Soita Red Hot Chili Peppersin 'Under the Bridge'. Kuvittele olevasi Los Angelesissa sateisena iltana. Tunne yksinäisyys, mutta myös rauhaa.",
+            context: "1991, Blood Sugar Sex Magik. Anthony Kiedisin tunteet."
+        }
+    ];
+
+    // --- LOGIC ---
+    const todayStr = new Date().toDateString(); // e.g., "Mon May 04 2026"
+    const STORAGE_KEY_TASK = 'lumo_90s_task_date';
+    const STORAGE_KEY_COMPLETED = 'lumo_90s_completed';
+    
+    // DOM Elements
+    const taskCard = document.getElementById('task-card');
+    const topicTag = document.getElementById('topic-tag');
+    const taskText = document.getElementById('task-text');
+    const contextDiv = document.getElementById('context');
+    const btnStart = document.getElementById('btn-start');
+    const btnDone = document.getElementById('btn-done');
+    const timerSection = document.getElementById('timer-section');
+    const timerDisplay = document.getElementById('timer');
+    const statusMsg = document.getElementById('status-msg');
+    const completionMsg = document.getElementById('completion-msg');
+    const actionArea = document.getElementById('action-area');
+
+    let timerInterval;
+    let timeLeft = 300; // 5 minutes in seconds
+
+    // Initialize
+    function init() {
+        const savedDate = localStorage.getItem(STORAGE_KEY_TASK);
+        const isCompleted = localStorage.getItem(STORAGE_KEY_COMPLETED) === todayStr;
+
+        if (isCompleted) {
+            showCompletion();
+            return;
+        }
+
+        if (savedDate !== todayStr) {
+            // New day, pick new ritual
+            const randomRitual = rituals[Math.floor(Math.random() * rituals.length)];
+            localStorage.setItem(STORAGE_KEY_TASK, todayStr);
+            displayRitual(randomRitual);
+        } else {
+            // Same day, load existing (though we don't store the ritual itself, just the date)
+            // In a real app, you'd store the ritual ID too. For now, we just show a generic message if date matches but ritual wasn't stored.
+            // To keep it simple: if date matches, we assume the user knows what to do or we re-roll (but let's stick to the date check).
+            // Actually, let's just re-roll if we didn't save the specific ritual. 
+            // Better UX: Save the ritual ID too.
+            const savedRitualId = localStorage.getItem('lumo_90s_ritual_id');
+            if(savedRitualId) {
+                displayRitual(rituals[savedRitualId]);
+            } else {
+                // Fallback if only date was saved
+                const randomRitual = rituals[Math.floor(Math.random() * rituals.length)];
+                localStorage.setItem('lumo_90s_ritual_id', rituals.indexOf(randomRitual));
+                displayRitual(randomRitual);
+            }
+        }
+    }
+
+    function displayRitual(ritual) {
+        topicTag.textContent = ritual.topic;
+        taskText.textContent = ritual.task;
+        contextDiv.textContent = ritual.context;
+    }
+
+    function startTimer() {
+        btnStart.style.display = 'none';
+        timerSection.style.display = 'block';
+        btnDone.style.display = 'block';
+        statusMsg.textContent = "Aika alkaa nyt. Hengitä.";
+        
+        updateTimerDisplay();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                statusMsg.textContent = "Aika on täynnä. Olet tehnyt parhaasi.";
+                btnDone.focus();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function completeTask() {
+        clearInterval(timerInterval);
+        localStorage.setItem(STORAGE_KEY_COMPLETED, todayStr);
+        showCompletion();
+    }
+
+    function showCompletion() {
+        taskCard.style.display = 'none';
+        timerSection.style.display = 'none';
+        actionArea.style.display = 'none';
+        completionMsg.style.display = 'block';
+        statusMsg.textContent = "";
+    }
+
+    // Event Listeners
+    btnStart.addEventListener('click', startTimer);
+    btnDone.addEventListener('click', completeTask);
+
+    // Run
+    init();
+
+</script>
 </body>
-</html>
- 
+</html> 
