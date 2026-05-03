@@ -11,22 +11,26 @@
         
         /* Käyttöliittymä */
         #ui-layer { position: fixed; top: 15px; left: 15px; z-index: 100; background: rgba(0,0,0,0.85); padding: 15px; border-left: 5px solid var(--accent); border-radius: 4px; }
+        
         #now-playing { 
             position: fixed; top: 15px; right: 15px; z-index: 100; 
             background: #282828; padding: 15px; border-radius: 8px; 
             display: none; border: 1px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            max-width: 250px;
         }
-        #now-playing a { color: #ffeb3b; text-decoration: none; font-weight: bold; }
+        #now-playing a { color: #ffeb3b; text-decoration: none; font-weight: bold; font-size: 0.9em; display: block; margin-top: 5px; }
+        
         #clue-box { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: var(--accent); padding: 20px; border-radius: 50px;
-            font-size: 1.3em; font-weight: bold; min-width: 300px; text-align: center;
+            font-size: 1.3em; font-weight: bold; min-width: 320px; text-align: center;
             box-shadow: 0 5px 20px rgba(244,67,54,0.4); z-index: 100;
         }
 
-        /* Ristikko */
+        /* Ristikkoalue */
         #viewport { width: 100vw; height: 100vh; cursor: grab; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         #grid { display: grid; background: #000; gap: 1px; transform-origin: center; }
+        
         .cell { width: 50px; height: 50px; background: var(--cell); position: relative; }
         .cell.active { background: #fff; }
         .cell input { 
@@ -35,7 +39,9 @@
         }
         .cell.correct input { color: #2e7d32; }
         .num { position: absolute; top: 2px; left: 2px; font-size: 11px; color: #999; }
-        #yt-player { position: absolute; visibility: hidden; pointer-events: none; }
+        
+        /* YouTube piilossa */
+        #yt-player { position: absolute; top: -1000px; left: -1000px; }
     </style>
 </head>
 <body>
@@ -46,12 +52,12 @@
 </div>
 
 <div id="now-playing">
-    <div style="font-size: 0.8em; color: #aaa;">NYT SOI:</div>
-    <div id="track-info"></div>
-    <a id="yt-link" href="#" target="_blank">Avaa koko biisi YouTubessa ➔</a>
+    <div style="font-size: 0.7em; color: #aaa; text-transform: uppercase;">Nyt soi:</div>
+    <div id="track-info" style="font-weight: bold; margin: 5px 0;"></div>
+    <a id="yt-link" href="#" target="_blank">Kuuntele koko biisi ➔</a>
 </div>
 
-<div id="clue-box">Valitse ruutu aloittaaksesi...</div>
+<div id="clue-box">Klikkaa valkoista ruutua...</div>
 
 <div id="viewport">
     <div id="grid"></div>
@@ -66,16 +72,17 @@
         player = new YT.Player('yt-player', { height: '0', width: '0' });
     }
 
+    // TÄSSÄ ON SANAT JA BIISIT
     const words = [
-        { x: 2, y: 2, answer: "METALLICA", clue: "Mustan albumin (1991) tekijät", dir: "h", num: 1, yt: "CD-E-LDc384", start: 72, info: "Metallica - Enter Sandman" },
-        { x: 2, y: 2, answer: "MATRIX", clue: "Punainen vai sininen pilleri? (1999)", dir: "v", num: 1, yt: "m8e-FF8MsqU", start: 30, info: "Propellerheads - Spybreak! (Matrix Theme)" },
-        { x: 8, y: 2, answer: "NIRVANA", clue: "Grunge-ilmiö Seattlesta", dir: "v", num: 2, yt: "hTWKbfoikeg", start: 0, info: "Nirvana - Smells Like Teen Spirit" },
-        { x: 1, y: 6, answer: "TERMINATOR", clue: "Arskan 'I'll be back' jatko-osa (1991)", dir: "h", num: 3, yt: "dpwWYOE1f90", start: 5, info: "Brad Fiedel - Terminator 2 Theme" },
-        { x: 5, y: 8, answer: "DIVER", clue: "Dion pyhä sukeltaja", dir: "h", num: 4, yt: "2lvs2FzF238", start: 45, info: "Dio - Holy Diver" }
+        { x: 5, y: 5, answer: "DIVER", clue: "Dion pyhä sukeltaja (1983/90-luvun kestohitti)", dir: "h", num: 1, yt: "2lvs2FzF238", start: 45, info: "Dio - Holy Diver" },
+        { x: 5, y: 5, answer: "DIMEBAG", clue: "Panteran edesmennyt kitaravelho", dir: "v", num: 1, yt: "RVMvART9cW8", start: 35, info: "Pantera - Walk" },
+        { x: 1, y: 8, answer: "TERMINATOR", clue: "Arskan 'I'll be back' jatko-osa (1991)", dir: "h", num: 2, yt: "dpwWYOE1f90", start: 5, info: "Brad Fiedel - T2 Theme" },
+        { x: 10, y: 3, answer: "SANDMAN", clue: "Metallican suurin hitti (1991)", dir: "v", num: 3, yt: "CD-E-LDc384", start: 72, info: "Metallica - Enter Sandman" },
+        { x: 15, y: 5, answer: "MATRIX", clue: "Punainen vai sininen pilleri? (1999)", dir: "v", num: 4, yt: "m8e-FF8MsqU", start: 30, info: "Propellerheads - Matrix Theme" }
     ];
 
     const grid = document.getElementById('grid');
-    const gridSize = 30;
+    const gridSize = 50; // Tehtiin tilaa 50x50
 
     function init() {
         grid.style.gridTemplateColumns = `repeat(${gridSize}, 50px)`;
@@ -94,7 +101,9 @@
                     const input = document.createElement('input');
                     input.maxLength = 1;
                     cell.appendChild(input);
-                    input.addEventListener('focus', () => document.getElementById('clue-box').innerText = `${w.num}. ${w.clue}`);
+                    input.addEventListener('focus', () => {
+                        document.getElementById('clue-box').innerText = `${w.num}. ${w.clue}`;
+                    });
                     input.addEventListener('input', (e) => {
                         if(e.target.value.toUpperCase() === w.answer[i]) {
                             cell.classList.add('correct');
@@ -119,23 +128,37 @@
         }
         
         if(correctCount === w.answer.length) {
-            // Palkinto!
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            // TUULETUS!
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#f44336', '#ffffff', '#ffd700'] });
+            
             if(player && w.yt) {
                 player.loadVideoById({ videoId: w.yt, startSeconds: w.start });
                 document.getElementById('now-playing').style.display = 'block';
                 document.getElementById('track-info').innerText = w.info;
                 document.getElementById('yt-link').href = `https://www.youtube.com/watch?v=${w.yt}&t=${w.start}s`;
-                setTimeout(() => player.stopVideo(), 15000); // Soittaa 15 sekuntia
+                // Soitetaan 20 sekuntia ja sammutetaan
+                setTimeout(() => player.stopVideo(), 20000);
             }
         }
     }
 
-    // Yksinkertainen raahaus
+    // Liikuttelu
     let isDragging = false, px=0, py=0, sx, sy, sc=0.8;
-    document.addEventListener('mousedown', e => { if(e.target.tagName!=='INPUT'){isDragging=true; sx=e.clientX-px; sy=e.clientY-py;}});
-    window.addEventListener('mousemove', e => { if(isDragging){px=e.clientX-sx; py=e.clientY-sy; update();}});
+    document.addEventListener('mousedown', e => { 
+        if(e.target.tagName !== 'INPUT'){ isDragging=true; sx=e.clientX-px; sy=e.clientY-py; }
+    });
+    window.addEventListener('mousemove', e => { 
+        if(isDragging){ px=e.clientX-sx; py=e.clientY-sy; update(); }
+    });
     window.addEventListener('mouseup', () => isDragging=false);
+    
+    // Zoom rullalla
+    window.addEventListener('wheel', e => {
+        e.preventDefault();
+        sc = Math.min(Math.max(0.1, sc + (e.deltaY * -0.001)), 2);
+        update();
+    }, { passive: false });
+
     function update() { grid.style.transform = `translate(${px}px, ${py}px) scale(${sc})`; }
     
     init(); update();
