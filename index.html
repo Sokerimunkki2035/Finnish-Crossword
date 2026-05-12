@@ -2,173 +2,137 @@
 <html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>90's Mega-Ristikko</title>
+    <title>90's Mega Crossword</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --accent: #ff0000; --bg: #f4f4f4; --clue-bg: #e0e0e0; }
-        body { margin: 0; background: var(--bg); font-family: 'Arial Narrow', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 10px; }
+        :root { --clue: #d1d1d1; --accent: #f44336; }
+        body { background: #f0f0f0; font-family: 'Arial Narrow', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; }
         
-        #ui { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 20px; text-align: center; border: 2px solid var(--accent); position: sticky; top: 10px; z-index: 100; }
-        #streak { font-size: 1.4em; font-weight: bold; color: var(--accent); }
+        #header { background: white; padding: 10px 20px; border-radius: 10px; border: 2px solid var(--accent); margin-bottom: 10px; text-align: center; width: 90%; max-width: 600px; }
         
-        #viewport { width: 100%; max-width: 900px; overflow-x: auto; padding-bottom: 50px; }
         #grid { 
             display: grid; 
-            grid-template-columns: repeat(10, 75px); 
-            grid-template-rows: repeat(12, 75px);
+            grid-template-columns: repeat(10, 60px); 
+            grid-template-rows: repeat(12, 60px);
             background: #000; gap: 1px; border: 3px solid #000;
         }
 
-        .cell { background: white; position: relative; width: 75px; height: 75px; }
-        .clue { background: var(--clue-bg); font-size: 11px; font-weight: bold; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; position: relative; z-index: 1; }
-        
-        /* Nuolten parannus - Isommat ja täysin näkyvät */
-        .arrow { color: var(--accent); font-size: 26px; font-weight: 900; position: absolute; line-height: 1; z-index: 2; text-shadow: 1px 1px 0px #fff; }
-        .arrow-r { bottom: 2px; right: 5px; } /* Oikealle osoittava nuoli */
-        .arrow-d { bottom: 2px; left: 50%; transform: translateX(-50%); } /* Alas osoittava nuoli */
+        .cell { background: white; width: 60px; height: 60px; position: relative; }
+        .clue { 
+            background: var(--clue); font-size: 10px; font-weight: bold; padding: 2px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; line-height: 1; position: relative;
+        }
+        .arrow { color: var(--accent); font-size: 18px; position: absolute; bottom: 1px; right: 2px; font-weight: 900; }
+        .arrow-d { bottom: 1px; left: 50%; transform: translateX(-50%); right: auto; }
 
-        .cell input {
+        input {
             width: 100%; height: 100%; border: none; text-align: center;
-            font-size: 32px; font-weight: bold; text-transform: uppercase; outline: none;
-            background: transparent;
+            font-size: 28px; font-weight: bold; text-transform: uppercase; outline: none;
+            background: transparent; cursor: pointer;
         }
-        .cell.correct input { color: #2e7d32; background: #e8f5e9; }
-
-        #reward-box { 
-            position: fixed; bottom: 20px; right: 20px; background: #222; color: #ffeb3b; 
-            padding: 15px; border-radius: 10px; display: none; z-index: 1000; border: 2px solid #444;
-        }
+        .correct { background: #e8f5e9 !important; }
+        .correct input { color: #2e7d32; }
     </style>
 </head>
 <body>
 
-<div id="ui">
-    <div id="streak">STRIikki: <span id="streak-count">0</span> PÄIVÄÄ 🔥</div>
-    <div id="timer">TÄNÄÄN: <span id="time">00:00</span> / 05:00</div>
+<div id="header">
+    <div style="font-weight: bold; color: var(--accent);">STRIikki: <span id="s-val">0</span> PÄIVÄÄ 🔥</div>
+    <div id="timer">AIKA: 00:00 / 05:00</div>
 </div>
 
-<div id="reward-box">
-    <div id="track-name" style="font-weight:bold;"></div>
-    <a id="yt-link" href="#" target="_blank" style="color:#fff; display:block; margin-top:5px;">Avaa biisi YouTubessa ➔</a>
+<div id="grid">
+    <!-- RIVI 1 -->
+    <div class="clue">DION<br>PYHÄ<span class="arrow">➔</span></div>
+    <div class="cell" data-ans="H"><input maxlength="1"></div>
+    <div class="cell" data-ans="O"><input maxlength="1"></div>
+    <div class="cell" data-ans="L"><input maxlength="1"></div>
+    <div class="cell" data-ans="Y"><input maxlength="1"></div>
+    <div class="clue">PULP<br>...<span class="arrow arrow-d">⬇</span></div>
+    <div class="clue">METALLICA<br>ALBUMI<span class="arrow arrow-d">⬇</span></div>
+    <div class="cell" data-ans="B"><input maxlength="1"></div>
+    <div class="cell"></div><div class="cell"></div>
+
+    <!-- RIVI 2 -->
+    <div class="clue">KOTI<span class="arrow">➔</span></div>
+    <div class="cell" data-ans="K"><input maxlength="1"></div>
+    <div class="cell" data-ans="O"><input maxlength="1"></div>
+    <div class="cell" data-ans="T"><input maxlength="1"></div>
+    <div class="cell" data-ans="I"><input maxlength="1"></div>
+    <div class="cell" data-ans="F"><input maxlength="1"></div>
+    <div class="cell" data-ans="M"><input maxlength="1"></div>
+    <div class="cell" data-ans="L"><input maxlength="1"></div>
+    <div class="cell"></div><div class="cell"></div>
+
+    <!-- RIVI 3 -->
+    <div class="clue">PITTIN<br>TRIL.<span class="arrow">➔</span></div>
+    <div class="cell" data-ans="S"><input maxlength="1"></div>
+    <div class="cell" data-ans="E"><input maxlength="1"></div>
+    <div class="cell" data-ans="V"><input maxlength="1"></div>
+    <div class="cell" data-ans="E"><input maxlength="1"></div>
+    <div class="cell" data-ans="N"><input maxlength="1"></div>
+    <div class="cell" data-ans="I"><input maxlength="1"></div>
+    <div class="cell" data-ans="A"><input maxlength="1"></div>
+    <div class="cell"></div><div class="cell"></div>
+
+    <!-- RIVI 4 -->
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="clue">GRUNGE<span class="arrow arrow-d">⬇</span></div>
+    <div class="cell" data-ans="I"><input maxlength="1"></div>
+    <div class="cell" data-ans="C"><input maxlength="1"></div>
+    <div class="cell" data-ans="C"><input maxlength="1"></div>
+    <div class="cell"></div><div class="cell"></div>
+
+    <!-- RIVI 5 -->
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+    <div class="cell" data-ans="N"><input maxlength="1"></div>
+    <div class="cell" data-ans="C"><input maxlength="1"></div>
+    <div class="cell" data-ans="K"><input maxlength="1"></div>
+    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
 </div>
 
-<div id="viewport">
-    <div id="grid">
-        <!-- RIVI 1 -->
-        <div class="clue">DION<br>PYHÄ<br>SUK.<span class="arrow arrow-r">➔</span></div>
-        <div class="cell"><input maxlength="1" data-ans="H" data-word="HOLY" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="O" data-word="HOLY" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="L" data-word="HOLY" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="Y" data-word="HOLY"></div>
-        <div class="clue">PULP<span class="arrow arrow-d">⬇</span></div>
-        <div class="cell"><input maxlength="1" data-ans="P" data-word="PULP" data-dir="d"></div>
-        <div class="clue">MUSTA<br>ALBUMI<span class="arrow arrow-d">⬇</span></div>
-        <div class="cell"><input maxlength="1" data-ans="M" data-word="METALLICA" data-dir="d"></div>
-        <div class="cell"><input maxlength="1"></div>
-
-        <!-- RIVI 2 -->
-        <div class="clue">ASUTUS<span class="arrow arrow-r">➔</span></div>
-        <div class="cell"><input maxlength="1" data-ans="K" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="O" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="T" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="I"></div>
-        <div class="cell"><input maxlength="1" data-ans="U" data-word="PULP" data-dir="d"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1" data-ans="E" data-word="METALLICA" data-dir="d"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-
-        <!-- RIVI 3 -->
-        <div class="clue">PITTIN<br>TRIL.<span class="arrow arrow-r">➔</span></div>
-        <div class="cell"><input maxlength="1" data-ans="S" data-word="SEVEN" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="E" data-word="SEVEN" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="V" data-word="SEVEN" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="E" data-word="SEVEN" data-dir="r"></div>
-        <div class="cell"><input maxlength="1" data-ans="N" data-word="SEVEN"></div>
-        <div class="cell"><input maxlength="1" data-ans="L" data-word="PULP" data-dir="d"></div>
-        <div class="clue">SEATTLE<br>GRUNGE<span class="arrow arrow-d">⬇</span></div>
-        <div class="cell"><input maxlength="1" data-ans="T" data-word="METALLICA" data-dir="d"></div>
-        <div class="cell"><input maxlength="1"></div>
-
-        <!-- RIVI 4 -->
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1" data-ans="P" data-word="PULP"></div>
-        <div class="cell"><input maxlength="1" data-ans="N" data-word="NIRVANA" data-dir="d"></div>
-        <div class="cell"><input maxlength="1" data-ans="A" data-word="METALLICA" data-dir="d"></div>
-        <div class="cell"><input maxlength="1"></div>
-        <div class="cell"><input maxlength="1"></div>
-    </div>
-</div>
-
-<div id="yt-player" style="display:none"></div>
-
-<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    let player;
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('yt-player', { height: '0', width: '0' });
-    }
-
-    const songs = {
-        "HOLY": { id: "2lvs2FzF238", start: 45, name: "Dio - Holy Diver" },
-        "NIRVANA": { id: "hTWKbfoikeg", start: 0, name: "Nirvana - Smells Like Teen Spirit" },
-        "METALLICA": { id: "CD-E-LDc384", start: 72, name: "Metallica - Enter Sandman" }
-    };
-
     const inputs = document.querySelectorAll('input');
+    
     inputs.forEach((input, index) => {
         input.addEventListener('input', (e) => {
             const val = e.target.value.toUpperCase();
-            if(val === input.dataset.ans) {
-                input.parentElement.classList.add('correct');
-                checkWord(input.dataset.word);
-            }
-            
-            // AUTOMAATTINEN SIIRTYMINEN NUOLEN SUUNTAAN
-            if(val.length === 1) {
-                if(input.dataset.dir === 'r') { // Oikealle
-                    inputs[index + 1]?.focus();
-                } else if(input.dataset.dir === 'd') { // Alas (10 saraketta)
-                    inputs[index + 10]?.focus();
+            const cell = input.parentElement;
+            const correctAns = cell.dataset.ans;
+
+            if (val === correctAns) {
+                cell.classList.add('correct');
+                // AUTOMAATTINEN HYPPÄYS: Etsi seuraava tyhjä input
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
                 }
+                checkWin();
             }
         });
 
-        // Takaisinpäin pyyhkiessä
+        // Backspace siirtää taaksepäin
         input.addEventListener('keydown', (e) => {
-            if(e.key === 'Backspace' && input.value === '') {
-                inputs[index - 1]?.focus();
+            if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                inputs[index - 1].focus();
             }
         });
     });
 
-    function checkWord(wordKey) {
-        if(!wordKey) return;
-        const wordInputs = document.querySelectorAll(`input[data-word="${wordKey}"]`);
-        const isComplete = Array.from(wordInputs).every(i => i.value.toUpperCase() === i.dataset.ans);
-        
-        if(isComplete && songs[wordKey]) {
+    function checkWin() {
+        const allCorrect = Array.from(inputs).every(i => i.value.toUpperCase() === i.parentElement.dataset.ans);
+        if (allCorrect) {
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            if(player) {
-                player.loadVideoById({ videoId: songs[wordKey].id, startSeconds: songs[wordKey].start });
-                document.getElementById('reward-box').style.display = 'block';
-                document.getElementById('track-name').innerText = "NYT SOI: " + songs[wordKey].name;
-                document.getElementById('yt-link').href = `https://www.youtube.com/watch?v=${songs[wordKey].id}`;
-            }
         }
     }
 
+    // Ajastin
     let sec = 0;
     setInterval(() => {
         sec++;
         const m = Math.floor(sec/60).toString().padStart(2,'0');
         const s = (sec%60).toString().padStart(2,'0');
-        document.getElementById('time').innerText = `${m}:${s}`;
+        document.getElementById('timer').innerText = `AIKA: ${m}:${s} / 05:00`;
     }, 1000);
 </script>
 </body>
