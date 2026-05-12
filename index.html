@@ -1,139 +1,521 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>90's Mega Crossword</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <style>
-        :root { --clue: #d1d1d1; --accent: #f44336; }
-        body { background: #f0f0f0; font-family: 'Arial Narrow', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 10px; }
-        
-        #header { background: white; padding: 10px 20px; border-radius: 10px; border: 2px solid var(--accent); margin-bottom: 10px; text-align: center; width: 90%; max-width: 600px; }
-        
-        #grid { 
-            display: grid; 
-            grid-template-columns: repeat(10, 60px); 
-            grid-template-rows: repeat(12, 60px);
-            background: #000; gap: 1px; border: 3px solid #000;
-        }
-
-        .cell { background: white; width: 60px; height: 60px; position: relative; }
-        .clue { 
-            background: var(--clue); font-size: 10px; font-weight: bold; padding: 2px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; line-height: 1; position: relative;
-        }
-        .arrow { color: var(--accent); font-size: 18px; position: absolute; bottom: 1px; right: 2px; font-weight: 900; }
-        .arrow-d { bottom: 1px; left: 50%; transform: translateX(-50%); right: auto; }
-
-        input {
-            width: 100%; height: 100%; border: none; text-align: center;
-            font-size: 28px; font-weight: bold; text-transform: uppercase; outline: none;
-            background: transparent; cursor: pointer;
-        }
-        .correct { background: #e8f5e9 !important; }
-        .correct input { color: #2e7d32; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" 
+          content="width=device-width,
+                   initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Word Puzzle</title>
 </head>
+
 <body>
 
-<div id="header">
-    <div style="font-weight: bold; color: var(--accent);">STRIikki: <span id="s-val">0</span> PÄIVÄÄ 🔥</div>
-    <div id="timer">AIKA: 00:00 / 05:00</div>
-</div>
+    <div class="game-container">
 
-<div id="grid">
-    <!-- RIVI 1 -->
-    <div class="clue">DION<br>PYHÄ<span class="arrow">➔</span></div>
-    <div class="cell" data-ans="H"><input maxlength="1"></div>
-    <div class="cell" data-ans="O"><input maxlength="1"></div>
-    <div class="cell" data-ans="L"><input maxlength="1"></div>
-    <div class="cell" data-ans="Y"><input maxlength="1"></div>
-    <div class="clue">PULP<br>...<span class="arrow arrow-d">⬇</span></div>
-    <div class="clue">METALLICA<br>ALBUMI<span class="arrow arrow-d">⬇</span></div>
-    <div class="cell" data-ans="B"><input maxlength="1"></div>
-    <div class="cell"></div><div class="cell"></div>
+        <div class="puzzle-grid">
+            <h1 style="position: absolute; top: 2px;">
+                         Word Puzzle Game</h1>
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">1</span>
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+            </div>
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
 
-    <!-- RIVI 2 -->
-    <div class="clue">KOTI<span class="arrow">➔</span></div>
-    <div class="cell" data-ans="K"><input maxlength="1"></div>
-    <div class="cell" data-ans="O"><input maxlength="1"></div>
-    <div class="cell" data-ans="T"><input maxlength="1"></div>
-    <div class="cell" data-ans="I"><input maxlength="1"></div>
-    <div class="cell" data-ans="F"><input maxlength="1"></div>
-    <div class="cell" data-ans="M"><input maxlength="1"></div>
-    <div class="cell" data-ans="L"><input maxlength="1"></div>
-    <div class="cell"></div><div class="cell"></div>
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+            </div>
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
 
-    <!-- RIVI 3 -->
-    <div class="clue">PITTIN<br>TRIL.<span class="arrow">➔</span></div>
-    <div class="cell" data-ans="S"><input maxlength="1"></div>
-    <div class="cell" data-ans="E"><input maxlength="1"></div>
-    <div class="cell" data-ans="V"><input maxlength="1"></div>
-    <div class="cell" data-ans="E"><input maxlength="1"></div>
-    <div class="cell" data-ans="N"><input maxlength="1"></div>
-    <div class="cell" data-ans="I"><input maxlength="1"></div>
-    <div class="cell" data-ans="A"><input maxlength="1"></div>
-    <div class="cell"></div><div class="cell"></div>
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">2</span>
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
 
-    <!-- RIVI 4 -->
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-    <div class="clue">GRUNGE<span class="arrow arrow-d">⬇</span></div>
-    <div class="cell" data-ans="I"><input maxlength="1"></div>
-    <div class="cell" data-ans="C"><input maxlength="1"></div>
-    <div class="cell" data-ans="C"><input maxlength="1"></div>
-    <div class="cell"></div><div class="cell"></div>
+            </div>
+            <div class="row">
 
-    <!-- RIVI 5 -->
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-    <div class="cell" data-ans="N"><input maxlength="1"></div>
-    <div class="cell" data-ans="C"><input maxlength="1"></div>
-    <div class="cell" data-ans="K"><input maxlength="1"></div>
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-</div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">3</span>
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
 
-<script>
-    const inputs = document.querySelectorAll('input');
-    
-    inputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-            const val = e.target.value.toUpperCase();
-            const cell = input.parentElement;
-            const correctAns = cell.dataset.ans;
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">4</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">5</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
 
-            if (val === correctAns) {
-                cell.classList.add('correct');
-                // AUTOMAATTINEN HYPPÄYS: Etsi seuraava tyhjä input
-                if (index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                }
-                checkWin();
-            }
-        });
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
 
-        // Backspace siirtää taaksepäin
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && input.value === '' && index > 0) {
-                inputs[index - 1].focus();
-            }
-        });
-    });
+            </div>
+            <div class="row">
+                <div class="cell">
+                    <input type="text" maxlength="1" />
 
-    function checkWin() {
-        const allCorrect = Array.from(inputs).every(i => i.value.toUpperCase() === i.parentElement.dataset.ans);
-        if (allCorrect) {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-        }
-    }
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
 
-    // Ajastin
-    let sec = 0;
-    setInterval(() => {
-        sec++;
-        const m = Math.floor(sec/60).toString().padStart(2,'0');
-        const s = (sec%60).toString().padStart(2,'0');
-        document.getElementById('timer').innerText = `AIKA: ${m}:${s} / 05:00`;
-    }, 1000);
-</script>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+
+            </div>
+            <div class="row">
+
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">6</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive">
+
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">7</span>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive">
+
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive">
+
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">8</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">9</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">10</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                    <span class="number">11</span>
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+                </div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+
+            </div>
+
+            <div class="row">
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+                <div class="cell">
+                    <input type="text" maxlength="1" />
+
+                </div>
+                <div class="cell inactive"></div>
+                <div class="cell inactive"></div>
+
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+        <div class="clues">
+            <h2>Clues</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Clue Number</th>
+                        <th>Clue Direction</th>
+                        <th>Clue Text</th>
+                        <th>Answer</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Down</td>
+                        <td>Fastest land animal</td>
+                        <td><button id="show-answers-btn1">
+                                Show Answer
+                            </button>
+                            <div class="h1">CHEETAH</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Down</td>
+                        <td>Starts life as a tadpole</td>
+                        <td><button id="show-answers-btn2">
+                                Show Answer
+                            </button>
+                            <div class="h2">FROG</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Down</td>
+                        <td>Man's best friend</td>
+                        <td><button id="show-answers-btn3">
+                                Show Answer
+                            </button>
+                            <div class="h3">DOG</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Across</td>
+                        <td>Has black and white stripes</td>
+                        <td><button id="show-answers-btn4">
+                                Show Answer
+                            </button>
+                            <div class="h4">ZEBRA</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Down</td>
+                        <td>Large animals with a trunk</td>
+                        <td><button id="show-answers-btn5">
+                                Show Answer
+                            </button>
+                            <div class="h5">ELEPHANT</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Across</td>
+                        <td>Tallest land animal</td>
+                        <td><button id="show-answers-btn6">
+                                Show Answer
+                            </button>
+                            <div class="h6">GIRAFFE</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Down</td>
+                        <td>King of the jungle</td>
+                        <td><button id="show-answers-btn7">
+                                Show Answer
+                            </button>
+                            <div class="h7">LION</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Across</td>
+                        <td>Hopping Australian marsupial</td>
+                        <td><button id="show-answers-btn8">
+                                Show Answer
+                            </button>
+                            <div class="h8">KANGAROOO</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Down</td>
+                        <td>Large animal with a horn</td>
+                        <td><button id="show-answers-btn9">
+                                Show Answer
+                            </button>
+                            <div class="h9">RHINO</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Across</td>
+                        <td>Likes to chase mice</td>
+                        <td><button id="show-answers-btn10">
+                                Show Answer
+                            </button>
+                            <div class="h10">CAT</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Across</td>
+                        <td>Like to roll around in the mud</td>
+                        <td><button id="show-answers-btn11">
+                                Show Answer
+                            </button>
+                            <div class="h11">PIG</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
 </body>
+
 </html>
